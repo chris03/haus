@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <style>
+    .glyphicon.spinning {
+      animation: spin 1s infinite linear;
+      -webkit-animation: spin2 1s infinite linear;
+    }
+
+    @keyframes spin {
+      from {
+        transform: scale(1) rotate(0deg);
+      }
+      to {
+        transform: scale(1) rotate(360deg);
+      }
+    }
+    
+    @-webkit-keyframes spin2 {
+      from {
+        -webkit-transform: rotate(0deg);
+      }
+      to {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body class="container-fluid">
+  <div class="row" ng-app="App" ng-controller="SensorsController">
+    <div class="col-sm-12" ng-hide="init">
+      <i class="glyphicon glyphicon-refresh spinning"></i>&nbsp;Loading...
+    </div>
+    <div class="hidden" ng-class="{hidden: !init}">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-default" ng-click="load()" ng-disabled="loading">
+          <i class="glyphicon glyphicon-refresh" ng-class="{spinning: loading}"></i>&nbsp;Refresh
+        </button><small>{{sensors.queryTime | number: 1}} sec.</small>
+        <h3 title="Last update: {{sensors.tempOut.data.LastUpdate}}" style="margin-bottom: 3px;">Outside {{sensors.tempOut.data.Data}}, {{sensors.lux.data.Data}}</h3>
+        <div id="graph2" style="height: 200px;"></div>
+        <h3 title="Last update: {{sensors.tempPool.data.LastUpdate}}" style="margin-bottom: 3px;">Pool {{sensors.tempPool.data.Data}} ({{tempToF(sensors.tempPool.data.Temp)}} F)</h3>
+        <div title="Last update: {{sensors.tempHeater.data.LastUpdate}}">
+          <span style="color: #FF4500;">Heat: {{sensors.tempHeater.data.Data}} ({{tempToF(sensors.tempHeater.data.Temp)}} F)</span> Diff: <span style="{{poolDiff() >= 0 ? 'color: #FF2211' : 'color: #00DDEE'}}">{{poolDiff()}} C</span>
+        </div>
+        <div title="Last update: {{sensors.flow.data.LastUpdate}}">Flow: {{sensors.flow.data.Data}}</div>
+        <div title="Last update: {{sensors.energy.data.LastUpdate}}">Energy: {{sensors.energy.data.Data}}</div>
+        <div id="graph" style="height: 200px;"></div>
+      </div>
+     <div class="col-sm-5 col-sm-offset-3">
+      <div class="alert alert-warning alert-dismissible" ng-show="sensors.tempHeater.data.Temp == 0 || sensors.tempPool.data.Temp == 0 || sensors.tempOut.data.Temp == 0 || sensors.lux.data.lux">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Warning!</strong> Some sensors are offline.
+      </div>
+     </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.2/jquery.timeago.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js"></script>
+  <script src="https://code.highcharts.com/5.0.11/highcharts.js"></script>
+  <script type="text/javascript" src="scripts.js"></script>
+</body>
+</html>
